@@ -1,6 +1,6 @@
 import os
 import pytest
-import test_service.model_parser as parser
+import pyclinic.model_parser as parser
 
 
 @pytest.fixture
