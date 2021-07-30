@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "2094c44d-5e15-45ef-8650-3e651b2f5909",
+		"name": "Deck of Cards",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create shuffled deck",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1",
+					"protocol": "http",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"deck",
+						"new",
+						"shuffle",
+						""
+					],
+					"query": [
+						{
+							"key": "deck_count",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

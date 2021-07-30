@@ -1,10 +1,16 @@
+from json.decoder import JSONDecodeError
 import os
+import json
+from pyclinic.models.postman_collection_model import PostmanCollection
+import requests
 import pytest
+from pyclinic import postman
 import pyclinic.model_parser as parser
+from tests import utils
 
 
 @pytest.fixture
-def model():
+def bookstore_user_model():
     return parser.json_to_model(
         JSON={
             "userId": "string",
@@ -26,16 +32,23 @@ def model():
     )
 
 
-def test_parse_json_to_model(model):
-    assert model is not None
-    assert "user_id: str" in model
+@pytest.fixture
+def write_model_to_file(bookstore_user_model):
+    file_path = parser.write_model_to_file(bookstore_user_model, "test_model.py")
+    yield file_path
+    os.remove(file_path)
 
 
 @pytest.fixture
-def write_model_to_file(model):
-    file_path = parser.write_model_to_file(model, "test_model.py")
-    yield file_path
-    os.remove(file_path)
+def petstore_model() -> PostmanCollection:
+    file_path = utils.build_example_path("petstore.postman_collection.json")
+    collection = postman.load_postman_collection_from_file(file_path)
+    return collection
+
+
+def test_parse_json_to_model(bookstore_user_model):
+    assert bookstore_user_model is not None
+    assert "user_id: str" in bookstore_user_model
 
 
 def test_model_file_is_created(write_model_to_file):

@@ -9,6 +9,8 @@ from typing import Dict, Union
 
 
 def json_to_model(JSON: Union[Dict, str]) -> str:
+    if JSON is None or JSON == "":
+        return ""
     URL = "https://ufgjji253b.execute-api.us-east-1.amazonaws.com/prod"
     payload = {
         "data": json.dumps(JSON),
@@ -19,7 +21,9 @@ def json_to_model(JSON: Union[Dict, str]) -> str:
     }
     response = requests.post(URL, json=payload)
     if not response.ok:
-        raise Exception(response.text)
+        raise Exception(
+            f"Unable to parse JSON to model with API Request: {response.text}"
+        )
     model = response.json()["model"]
     return model
 
@@ -31,7 +35,7 @@ def write_model_to_file(model: str, file_path: str = "model.py") -> str:
         model: The Pydantic Model string.
         file_path: The path must include the .py file extension.
 
-    * The file_path is from the project root directory.
+    * The file_path is relative to the Workspace Root.
 
     Returns:
         The path to the Model Python file.
