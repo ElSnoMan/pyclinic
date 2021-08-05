@@ -6,6 +6,109 @@
 	},
 	"item": [
 		{
+			"name": "Folder 1",
+			"item": [
+				{
+					"name": "Folder 1.1",
+					"item": [
+						{
+							"name": "Draw Cards",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://deckofcardsapi.com/api/deck/{{deck_id}}/draw/?count=2",
+									"protocol": "http",
+									"host": [
+										"deckofcardsapi",
+										"com"
+									],
+									"path": [
+										"api",
+										"deck",
+										"{{deck_id}}",
+										"draw",
+										""
+									],
+									"query": [
+										{
+											"key": "count",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reshuffle Deck",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://deckofcardsapi.com/api/deck/{{deck_id}}/shuffle/",
+							"protocol": "http",
+							"host": [
+								"deckofcardsapi",
+								"com"
+							],
+							"path": [
+								"api",
+								"deck",
+								"{{deck_id}}",
+								"shuffle",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Folder 2",
+			"item": [
+				{
+					"name": "List Cards in Piles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://deckofcardsapi.com/api/deck/{{deck_id}}/pile/{{pile_name}}/list/",
+							"protocol": "http",
+							"host": [
+								"deckofcardsapi",
+								"com"
+							],
+							"path": [
+								"api",
+								"deck",
+								"{{deck_id}}",
+								"pile",
+								"{{pile_name}}",
+								"list",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Create shuffled deck",
 			"request": {
 				"method": "GET",
@@ -32,7 +135,107 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"name": "Create shuffled deck",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1",
+							"protocol": "http",
+							"host": [
+								"deckofcardsapi",
+								"com"
+							],
+							"path": [
+								"api",
+								"deck",
+								"new",
+								"shuffle",
+								""
+							],
+							"query": [
+								{
+									"key": "deck_count",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sun, 01 Aug 2021 18:23:41 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "access-control-allow-origin",
+							"value": "*"
+						},
+						{
+							"key": "x-content-type-options",
+							"value": "nosniff"
+						},
+						{
+							"key": "referrer-policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "vary",
+							"value": "Origin"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=xi2zNj%2BkripL9sY0sVL7OPfDAPc%2BQdXokveYaYy5gV9fDqfcW7okYwNtawejCM20kXy1LSU%2BXjqZQ2TKRVEsf4SrGeh6M9YwIIRW58BzNAf2SBcv3GT63zBb48773W%2F%2FTz8qEQc%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "6781195c3d7527dc-SLC"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3-27=\":443\"; ma=86400, h3-28=\":443\"; ma=86400, h3-29=\":443\"; ma=86400, h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"deck_id\": \"2r6n1haqmjq3\",\n    \"remaining\": 52,\n    \"shuffled\": true\n}"
+				}
+			]
 		}
 	]
 }

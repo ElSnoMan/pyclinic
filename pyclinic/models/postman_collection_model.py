@@ -5,14 +5,21 @@ from pydantic import BaseModel, Field
 
 class PostmanCollectionInfo(BaseModel):
     postman_id: str = Field(..., alias="_postman_id")
-    name: str
     postman_schema: str = Field(..., alias="schema")
+    name: str
+    description: Optional[str]
 
 
 class PostmanCollectionVariable(BaseModel):
     key: str
     value: str
-    type: str
+    type: Optional[str]
+
+
+class PostmanCollection(BaseModel):
+    info: PostmanCollectionInfo
+    variable: Optional[List[PostmanCollectionVariable]]
+    item: Optional[List[Dict]]
 
 
 class PostmanRequestQuery(BaseModel):
@@ -29,10 +36,9 @@ class PostmanRequestUrl(BaseModel):
 
 
 class PostmanRequest(BaseModel):
-    """If the method is POST, then url is a str"""
     method: str
     header: List[Dict]
-    url: Union[PostmanRequestUrl, str]
+    url: Union[PostmanRequestUrl, str]  # if POST or PUT, then url is str
 
 
 class PostmanResponse(BaseModel):
@@ -47,17 +53,6 @@ class PostmanResponse(BaseModel):
 
 class PostmanItem(BaseModel):
     name: str
+    event: Optional[List[Dict]]
     request: PostmanRequest
     response: List[PostmanResponse]
-
-
-class PostmanFolder(BaseModel):
-    name: str
-    item: List[PostmanItem]
-
-
-class PostmanCollection(BaseModel):
-    info: PostmanCollectionInfo
-    variable: Optional[List[PostmanCollectionVariable]]
-    folders: Optional[List[PostmanFolder]]
-    item: Optional[List[PostmanItem]]

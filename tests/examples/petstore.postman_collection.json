@@ -67,10 +67,7 @@
 								}
 							],
 							"cookie": [],
-							"body": [
-								{  "id": 46523866,  "name": "Lorem sunt cillum officia",  "tag": "voluptate" },
-								{  "id": -43853497,  "name": "sint irure ea velit officia",  "tag": "Lorem ad" }
-							]
+							"body": "[\n {\n  \"id\": 46523866,\n  \"name\": \"Lorem sunt cillum officia\",\n  \"tag\": \"voluptate\"\n },\n {\n  \"id\": -43853497,\n  \"name\": \"sint irure ea velit officia\",\n  \"tag\": \"Lorem ad\"\n }\n]"
 						},
 						{
 							"name": "unexpected error",
@@ -103,10 +100,7 @@
 								}
 							],
 							"cookie": [],
-							"body": {
-								"code": 44276405,
-								"message": "exercitation cupidatat magna labore"
-							}
+							"body": "{\n \"code\": 44276405,\n \"message\": \"exercitation cupidatat magna labore\"\n}"
 						}
 					]
 				},
@@ -273,15 +267,192 @@
 							"body": "{\n \"code\": 44276405,\n \"message\": \"exercitation cupidatat magna labore\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Is 9 Even?",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.isevenapi.xyz/api/iseven/9",
+							"protocol": "https",
+							"host": [
+								"api",
+								"isevenapi",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"iseven",
+								"9"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Is 9 Odd?",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.isevenapi.xyz/api/iseven/9",
+									"protocol": "https",
+									"host": [
+										"api",
+										"isevenapi",
+										"xyz"
+									],
+									"path": [
+										"api",
+										"iseven",
+										"9"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.10.3"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 16:43:44 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "102"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"ad\": \"For sale: human skull. Used once only. $200 OBO Dr. Scott Tyler, 454-555-6533\",\n    \"iseven\": false\n}"
+						}
+					]
 				}
 			]
+		},
+		{
+			"name": "Is 10 Even?",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.isevenapi.xyz/api/iseven/10",
+					"protocol": "https",
+					"host": [
+						"api",
+						"isevenapi",
+						"xyz"
+					],
+					"path": [
+						"api",
+						"iseven",
+						"10"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Is 10 Even?",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.isevenapi.xyz/api/iseven/10",
+							"protocol": "https",
+							"host": [
+								"api",
+								"isevenapi",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"iseven",
+								"10"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.10.3"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 05 Aug 2021 16:43:57 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "157"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ad\": \"TIRED OF WORKING FOR ONLY $9.75 PER HOUR? We offer profit sharing and flexible hours. Starting pay: $5-$7 per hour. Call 413-555-3451\",\n    \"iseven\": true\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://petstore.swagger.io/v1",
-			"type": "string"
+			"value": "https://petstore.swagger.io/v2"
 		}
 	]
 }
