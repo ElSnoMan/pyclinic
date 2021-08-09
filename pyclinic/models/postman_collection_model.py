@@ -10,15 +10,9 @@ class PostmanCollectionInfo(BaseModel):
     description: Optional[str]
 
 
-class PostmanCollectionVariable(BaseModel):
-    key: str
-    value: str
-    type: Optional[str]
-
-
 class PostmanCollection(BaseModel):
     info: PostmanCollectionInfo
-    variable: Optional[List[PostmanCollectionVariable]]
+    variable: Optional[List[Dict]]
     item: Optional[List[Dict]]
 
 
@@ -39,6 +33,7 @@ class PostmanRequest(BaseModel):
     method: str
     header: List[Dict]
     url: Union[PostmanRequestUrl, str]  # if POST or PUT, then url is str
+    body: Optional[Dict]
 
 
 class PostmanResponse(BaseModel):

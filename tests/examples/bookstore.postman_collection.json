@@ -1,0 +1,759 @@
+{
+	"info": {
+		"_postman_id": "eb4e4ae3-fa1d-4736-9d15-43756559f487",
+		"name": "Book Store API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const json = pm.response.json()",
+									"const user = JSON.parse(pm.request.body.raw)",
+									"",
+									"pm.environment.set(\"USER_ID\", json.userID)",
+									"pm.environment.set(\"USERNAME\", user.userName)",
+									"pm.environment.set(\"PASSWORD\", user.password)",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"{{$randomFullName}}\",\n  \"password\": \"P@$$w0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Account/v1/User",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Account",
+								"v1",
+								"User"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userName\": \"Carlos Kidman\",\n  \"password\": \"P@$$w0rd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 18:59:45 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "87"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"57-/SdQJmMuJnwQJ5epfm/QTbZVvIg\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userID\": \"9d5bf123-724b-4bfb-aab7-0a7e633378ad\",\n    \"username\": \"Carlos Kidman\",\n    \"books\": []\n}"
+						},
+						{
+							"name": "406 User already exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userName\": {{$randomFullName}},\n  \"password\": \"P@$$w0rd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User"
+									]
+								}
+							},
+							"status": "Not Acceptable",
+							"code": 406,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 19:40:19 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"28-Ol+1T9TtJMfkxjesktiJwJPAuBU\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"1204\",\n    \"message\": \"User exists!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Generate Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"userName\": \"{{USERNAME}}\", \"password\": \"{{PASSWORD}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Account/v1/GenerateToken",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Account",
+								"v1",
+								"GenerateToken"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Generate Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userName\": \"Carlos Kidman\",\n  \"password\": \"P@$$w0rd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/GenerateToken",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"GenerateToken"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 19:01:29 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "280"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"118-UVSOBVMnYyl4MTaJSl/deeQw8dU\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkNhcmxvcyBLaWRtYW4iLCJwYXNzd29yZCI6IlBAJCR3MHJkIiwiaWF0IjoxNjI4MTkwMDg5fQ.JtUCwXS-nnUggyeScSvvjOibeAw61Q_nm__K6atnHlk\",\n    \"expires\": \"2021-08-12T19:01:29.921Z\",\n    \"status\": \"Success\",\n    \"result\": \"User authorized successfully.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Is Authorized?",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"Carlos Kidman\",\n  \"password\": \"P@$$w0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Account/v1/Authorized",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Account",
+								"v1",
+								"Authorized"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Is Authorized?",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userName\": \"Carlos Kidman\",\n  \"password\": \"P@$$w0rd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/Authorized",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"Authorized"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 19:02:45 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "4"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"4-X/5TO4MPCKAyY0ipFgr6/IraRNs\""
+								}
+							],
+							"cookie": [],
+							"body": "true"
+						}
+					]
+				},
+				{
+					"name": "Get User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Account",
+								"v1",
+								"User",
+								"{{USER_ID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "401 Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User/:UserId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User",
+										":UserId"
+									],
+									"variable": [
+										{
+											"key": "UserId",
+											"value": "9d5bf123-724b-4bfb-aab7-0a7e633378ad"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 19:04:41 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "48"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"30-V67npMN18Zy3bnk1xW2xtLGgx8c\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"1200\",\n    \"message\": \"User not authorized!\"\n}"
+						},
+						{
+							"name": "Get User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User",
+										"{{USER_ID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 20:13:16 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "92"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5c-wTT43ZRanZVMlNiFOtm11l3y/tI\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userId\": \"67db0cb1-4b7d-4de0-bc5a-bafd3f8c75ff\",\n    \"username\": \"Clifton Stiedemann\",\n    \"books\": []\n}"
+						},
+						{
+							"name": "User not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User",
+										"{{USER_ID}}"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 20:18:06 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b-hLPYyb0m8IpHH/aFjmp8VZrYXGw\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"1207\",\n    \"message\": \"User not found!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Account",
+								"v1",
+								"User",
+								"{{USER_ID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete User",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User",
+										"{{USER_ID}}"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 20:15:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"58-bauAIgo3FHKqRwYBxk0QkqBvpyM\""
+								}
+							],
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "UserId not correct",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/Account/v1/User/{{USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"Account",
+										"v1",
+										"User",
+										"{{USER_ID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.17.10 (Ubuntu)"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Aug 2021 20:16:52 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "48"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"30-zoAnprTpYK9HmHYlpHOx6U+Br2A\""
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"1207\",\n    \"message\": \"User Id not correct!\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "BookStore",
+			"item": []
+		}
+	]
+}

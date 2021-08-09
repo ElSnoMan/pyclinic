@@ -39,6 +39,29 @@ def load_postman_collection_from_file(collection_file_path: str) -> PostmanColle
     return collection
 
 
+def load_variables(variables_path: str) -> Dict:
+    try:
+        with open(variables_path, "r") as f:
+            variables = json.load(f)
+    except Exception as e:
+        _logger.fatal(f"Unable to load Postman Variables from file: {variables_path}")
+        raise e
+    return variables
+
+
+def flatten_variables(postman_variables: List[Dict]) -> Dict[str, Dict]:
+    """Convert a list of postman variable objects to a flat dictionary."""
+    values = postman_variables.copy()
+    variables = {}
+
+    for value in values:
+        # value => {'enabled': True, 'key': 'BASE_URL', 'value': 'https://demoqa.com'}
+        name = value.pop("key")
+        variables[name] = value
+
+    return variables
+
+
 def find_request_ascendants(request_context: DatumInContext) -> List[str]:
     """Find the respective folder ascendants for the given Postman Request.
 
@@ -65,23 +88,42 @@ def find_request_ascendants(request_context: DatumInContext) -> List[str]:
     return ascendants[::-1]
 
 
-def build_request_to_send(collection: PostmanCollection, request: PostmanRequest) -> Dict:
+def build_request_to_send(collection: PostmanCollection, variables: Dict, request: PostmanRequest) -> Dict:
     """Convert a single PostmanRequest to a dictionary to be used by requests."""
     # Replace variables with their actual values
     raw_url = request.url.raw
-    for found_var in re.findall(pattern=r"\{(.*)\}", string=raw_url):
-        if not collection.variable:
-            raise ValueError("No variables found in collection.")
-
-        var = next((v for v in collection.variable if v.key == found_var[1:-1]), None)
+    for found_var in re.findall(pattern=r"\{([^}]+)\}", string=raw_url):
+        key = found_var[1:]  # remove leading "{" not caught by regex
+        var = variables.get(key)  # => {'value': 'foo', 'enabled': True}
         if var is None:
-            raise ValueError(f"Variable {found_var} not found in collection variables.")
-        raw_url = raw_url.replace("{{" + var.key + "}}", var.value)
+            raise ValueError(f"{raw_url} => Variable {key} not found in collection, environment, or global variables.")
 
-    # Build the request dictionary
+        if var.get("enabled") is False:
+            raise ValueError(f"{raw_url} => Variable {key} was found, but enabled was set to False")
+
+        if var.get("value") is None or var.get("value") == "":
+            _logger.warning(f"{raw_url} => Variable {key} was found, but value was set to None or empty.")
+        raw_url = raw_url.replace("{{" + key + "}}", var.get("value"))
+
+    # Build the request dictionary (method, url, headers, data, etc.)
     request_dict = request.dict()
+    if request.body:
+        if request.body.get("raw"):
+            request_dict["data"] = json.loads(request.body.get("raw"))
+        elif request.body.get("urlencoded"):
+            request_dict["data"] = str(request.body.get("urlencoded"))
+        else:  # TODO: handle other types of request body like GraphQL and form-data
+            pass
+    del request_dict["body"]  # uses ["data"] instead of ["body"]
     request_dict["url"] = raw_url
-    request_dict["headers"] = request_dict.pop("header")
+
+    request_dict["headers"] = {}
+    header = request_dict.pop("header")
+    if header:
+        for item in header:
+            key = item["key"]
+            value = item["value"]
+            request_dict["headers"].update({key: value})
     return request_dict
 
 
@@ -161,9 +203,9 @@ class PostmanExecutableRequest:
     def __init__(self, request: Dict):
         self.request = request
 
-    def __call__(self):
-        # new_env = copy(self.post_python.environments)
-        # new_env.update(kwargs)
+    def __call__(self, **kwargs):
+        if kwargs:
+            self.request.update(kwargs)
         response = requests.request(**self.request)
         return response
 
@@ -179,7 +221,7 @@ class PostmanFolder:
         return self.folder[name]
 
 
-def find_requests(collection: PostmanCollection) -> Dict:
+def find_requests(collection: PostmanCollection, variables: Dict) -> Dict:
     """Find all request objects and flat map them to their respective folders.
 
     Returns a Dict like:
@@ -202,7 +244,7 @@ def find_requests(collection: PostmanCollection) -> Dict:
             folders[folder_name] = {}
 
         request_name = normalize_function_name(match.value["name"])
-        request_to_send = build_request_to_send(collection, PostmanRequest(**match.value["request"]))
+        request_to_send = build_request_to_send(collection, variables, PostmanRequest(**match.value["request"]))
         if request_name not in folders[folder_name]:
             folders[folder_name][request_name] = request_to_send
     return folders
@@ -232,20 +274,49 @@ def map_requests_to_executable_functions(folders: Dict) -> Dict:
 class Postman:
     """Instance of a Postman Collection with executable request functions.
 
+    Args:
+        collection_path: The path to the Postman collection file (*.postman_collection.json)
+        env_variables_path: The path to the Postman environment variables file (*.postman_environment.json)
+        global_env_variables: The path to the Postman global environment variables file (*.postman_globals.json)
+
     Format:
-        Postman.PostmanFolderRequest.PostmanExecutableRequest
+        Postman.PostmanFolderRequest.PostmanExecutableRequest(**kwargs)
 
     Examples:
         runner.Pets.list_all_pets()
+        runner.Accounts.create_a_user(data={"username": "johndoe", "password": "secret"})
+
+    * You can override the Request that the endpoint function sends. Here are some common options:
+        headers: A list of headers to send with the request.
+        method: The HTTP method to use.
+        url: The URL to send the request to.
+        params: A dictionary of parameters to send with the request.
+        data: The body of the request.
     """
 
-    def __init__(self, collection_path):
+    def __init__(self, collection_path, env_variables_path=None, global_variables_path=None):
         self.collection = load_postman_collection_from_file(collection_path)
+        self.variables = self.__extract_variables(env_variables_path, global_variables_path)
         self.folders = self.__load()
 
     def __load(self):
-        reqs = find_requests(self.collection)
+        reqs = find_requests(self.collection, self.variables)
         return map_requests_to_executable_functions(reqs)
+
+    def __extract_variables(self, env_variables_path, global_variables_path) -> Dict:
+        variables = {}
+        if global_variables_path:
+            _globals = load_variables(global_variables_path)
+            variables.update(flatten_variables(_globals["values"]))
+
+        if env_variables_path:
+            environment = load_variables(env_variables_path)
+            variables.update(flatten_variables(environment["values"]))
+
+        if self.collection.variable:
+            variables.update(flatten_variables(self.collection.variable))
+
+        return variables
 
     def __getattr__(self, name):
         if name not in self.folders:
