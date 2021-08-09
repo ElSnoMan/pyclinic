@@ -1,11 +1,9 @@
 import pytest
-import requests
 from jsonpath_ng import parse
 from pyclinic import postman
-from pyclinic.models.postman_collection_model import PostmanRequest
-
 from pyclinic.models.postman_collection_model import PostmanCollection
 from pyclinic.postman import Postman
+
 from tests import utils
 
 

@@ -1,11 +1,10 @@
-from json.decoder import JSONDecodeError
 import os
-import json
-from pyclinic.models.postman_collection_model import PostmanCollection
-import requests
+
+import pyclinic.model_parser as parser
 import pytest
 from pyclinic import postman
-import pyclinic.model_parser as parser
+from pyclinic.models.postman_collection_model import PostmanCollection
+
 from tests import utils
 
 

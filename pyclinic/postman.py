@@ -78,9 +78,9 @@ def find_request_ascendants(request_context: DatumInContext) -> List[str]:
             request_context = request_context.context  # go up a level
 
         try:
-            name = request_context.value.get("name")
+            name = request_context.value["name"]
             ascendants.append(name)
-        except:
+        except (TypeError, KeyError):
             break
         request_context = request_context.context  # go up a level
 
@@ -228,8 +228,8 @@ def find_requests(collection: PostmanCollection, variables: Dict) -> Dict:
     {
         'pets': {
             'create_a_pet': {'headers': [], 'method': 'POST', 'url': 'http://petstore.swagger.io/v1/pets'},
-            'info_for_a_specific_pet': {'headers': [], 'method': 'GET', 'url': 'http://petstore.swagger.io/v1/pets/:petId'},
-            'list_all_pets': {'headers': [], 'method': 'GET', 'url': 'http://petstore.swagger.io/v1/pets?limit=-71686804'},
+            'info_for_a_pet': {'headers': [], 'method': 'GET', 'url': 'http://petstore.swagger.io/v1/pets/:petId'},
+            'list_pets': {'headers': [], 'method': 'GET', 'url': 'http://petstore.swagger.io/v1/pets?limit=-71686804'},
         },
     }
     """
