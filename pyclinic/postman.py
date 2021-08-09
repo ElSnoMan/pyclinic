@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import requests
 from jsonpath_ng import parse
@@ -55,9 +55,10 @@ def flatten_variables(postman_variables: List[Dict]) -> Dict[str, Dict]:
     variables = {}
 
     for value in values:
-        # value => {'enabled': True, 'key': 'BASE_URL', 'value': 'https://demoqa.com'}
+        # From: value => {'enabled': True, 'key': 'BASE_URL', 'value': 'https://demoqa.com'}
         name = value.pop("key")
         variables[name] = value
+        # To: variables[name] => {'BASE_URL': {'enabled': True, 'value': 'https://demoqa.com'}}
 
     return variables
 
@@ -278,11 +279,16 @@ class Postman:
         collection_path: The path to the Postman collection file (*.postman_collection.json)
         env_variables_path: The path to the Postman environment variables file (*.postman_environment.json)
         global_env_variables: The path to the Postman global environment variables file (*.postman_globals.json)
+        user_variables: An optional dict of variables to be used by Postman
 
     Format:
         Postman.PostmanFolderRequest.PostmanExecutableRequest(**kwargs)
 
     Examples:
+        # Instantiate a Postman object
+        runner = Postman(collection_path, user_variables={"USERNAME": "foo", "PASSWORD": "bar"})
+
+        # Then call postman request function
         runner.Pets.list_all_pets()
         runner.Accounts.create_a_user(data={"username": "johndoe", "password": "secret"})
 
@@ -294,16 +300,22 @@ class Postman:
         data: The body of the request.
     """
 
-    def __init__(self, collection_path, env_variables_path=None, global_variables_path=None):
+    def __init__(
+        self,
+        collection_path: str,
+        env_variables_path: Optional[str] = None,
+        global_variables_path: Optional[str] = None,
+        user_variables: Optional[Dict] = None,
+    ):
         self.collection = load_postman_collection_from_file(collection_path)
-        self.variables = self.__extract_variables(env_variables_path, global_variables_path)
+        self.variables = self.__extract_variables(user_variables, env_variables_path, global_variables_path)
         self.folders = self.__load()
 
     def __load(self):
         reqs = find_requests(self.collection, self.variables)
         return map_requests_to_executable_functions(reqs)
 
-    def __extract_variables(self, env_variables_path, global_variables_path) -> Dict:
+    def __extract_variables(self, user_variables: Dict, env_variables_path, global_variables_path) -> Dict:
         variables = {}
         if global_variables_path:
             _globals = load_variables(global_variables_path)
@@ -315,6 +327,10 @@ class Postman:
 
         if self.collection.variable:
             variables.update(flatten_variables(self.collection.variable))
+
+        if user_variables:
+            for k, v in user_variables.items():
+                variables[k] = {"value": v, "enabled": True}
 
         return variables
 
