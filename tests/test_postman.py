@@ -119,3 +119,13 @@ def test_postman_bookstore_variables():
 
     runner = Postman(COLLECTION_PATH, ENV_PATH, GLOBAL_PATH)
     assert runner
+
+
+def test_postman_bookstore_user_variables():
+    GLOBAL_PATH = utils.WORKSPACE_GLOBAL_VARIABLES_PATH
+    ENV_PATH = utils.BOOKSTORE_ENV_VARIABLES_PATH
+    COLLECTION_PATH = utils.build_example_path(utils.BOOKSTORE_PATH)
+
+    user_variables = {"USERNAME": "Carlos Kidman"}
+    runner = Postman(COLLECTION_PATH, ENV_PATH, GLOBAL_PATH, user_variables)
+    assert runner
