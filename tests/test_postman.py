@@ -70,16 +70,6 @@ def test_find_deckofcards_response_bodies():
     assert list(folders.keys()) == expected
 
 
-def test_convert_single_PostmanRequest_with_variables_to_request(load_collection):
-    COLLECTION = load_collection(utils.PETSTORE_PATH)
-
-    req = PostmanRequest(**COLLECTION.item[0]["item"][0].get("request"))
-    REQUEST = postman.build_request_to_send(COLLECTION, req)
-
-    response = requests.request(**REQUEST)
-    assert response.status_code == 404
-
-
 def test_find_request_ascendants(load_collection):
     COLLECTION = load_collection(utils.DECKOFCARDS_PATH)
 
@@ -103,5 +93,31 @@ def test_postman_runner_e2e():
 def test_postman_runner_e2e_with_big_petstore():
     path = utils.build_example_path(utils.BIG_PETSTORE_PATH)
     runner = Postman(path)
-    response = runner.PetId.find_pet_by_id()
+    response = runner.PetId.updates_a_pet_in_the_store_with_form_data()
     assert response.status_code == 404
+
+
+def test_postman_runner_e2e_with_bookstore():
+    GLOBAL_PATH = utils.WORKSPACE_GLOBAL_VARIABLES_PATH
+    ENV_PATH = utils.BOOKSTORE_ENV_VARIABLES_PATH
+    path = utils.build_example_path(utils.BOOKSTORE_PATH)
+
+    runner = Postman(path, ENV_PATH, GLOBAL_PATH)
+    response = runner.Account.is_authorized(data={"userName": "pyclinic", "password": "P@$$w0rd"})
+    assert response.status_code == 404
+
+
+def test_postman_petstore_variables():
+    COLLECTION_PATH = utils.build_example_path(utils.PETSTORE_PATH)
+
+    runner = Postman(COLLECTION_PATH)
+    assert runner
+
+
+def test_postman_bookstore_variables():
+    GLOBAL_PATH = utils.WORKSPACE_GLOBAL_VARIABLES_PATH
+    ENV_PATH = utils.BOOKSTORE_ENV_VARIABLES_PATH
+    COLLECTION_PATH = utils.build_example_path(utils.BOOKSTORE_PATH)
+
+    runner = Postman(COLLECTION_PATH, ENV_PATH, GLOBAL_PATH)
+    assert runner
