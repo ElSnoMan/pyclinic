@@ -129,3 +129,14 @@ def test_postman_bookstore_user_variables():
     user_variables = {"USERNAME": "Carlos Kidman"}
     runner = Postman(COLLECTION_PATH, ENV_PATH, GLOBAL_PATH, user_variables)
     assert runner
+
+
+def test_deckofcards_multiple_calls():
+    COLLECTION_PATH = utils.build_example_path(utils.DECKOFCARDS_PATH)
+    runner = Postman(COLLECTION_PATH)
+
+    create_response = runner.Root.create_shuffled_deck()
+    deck_id = create_response.json().get("deck_id")
+
+    response = runner.Folder11.draw_cards({"deck_id": deck_id})
+    assert response

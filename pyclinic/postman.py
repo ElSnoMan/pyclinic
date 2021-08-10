@@ -89,22 +89,46 @@ def find_request_ascendants(request_context: DatumInContext) -> List[str]:
     return ascendants[::-1]
 
 
-def build_request_to_send(collection: PostmanCollection, variables: Dict, request: PostmanRequest) -> Dict:
-    """Convert a single PostmanRequest to a dictionary to be used by requests."""
-    # Replace variables with their actual values
+def replace_variables_with_actual_values(object: Dict, variables: Dict) -> Dict:
+    """Replace Postman Variables in the given object with the actual values found in the variables dictionary."""
+    POSTMAN_VARIABLE = r"\{([^}]+)\}"  # {{variable}}
+    for key, value in object.items():
+        if isinstance(value, str):
+            for found_var in re.findall(POSTMAN_VARIABLE, string=value):
+                found_var = found_var[1:]  # remove leading "{" not caught by regex
+                object[key] = value.replace("{{" + found_var + "}}", variables.get(found_var))
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                for found_var in re.findall(POSTMAN_VARIABLE, string=v):
+                    found_var = found_var[1:]
+                    value[k] = v.replace("{{" + found_var + "}}", variables.get(found_var))
+        else:
+            pass
+    return object
+
+
+def replace_url_variables_with_actual_values(request: PostmanRequest, variables: Dict) -> str:
+    """Replace any variables found in the URL with their actual values."""
     raw_url = request.url.raw
     for found_var in re.findall(pattern=r"\{([^}]+)\}", string=raw_url):
         key = found_var[1:]  # remove leading "{" not caught by regex
         var = variables.get(key)  # => {'value': 'foo', 'enabled': True}
         if var is None:
-            raise ValueError(f"{raw_url} => Variable {key} not found in collection, environment, or global variables.")
+            _logger.warning(f"{raw_url} => Variable {key} not found in collection, environment, or global variables.")
 
-        if var.get("enabled") is False:
-            raise ValueError(f"{raw_url} => Variable {key} was found, but enabled was set to False")
+        elif var.get("enabled") is False:
+            _logger.warning(f"{raw_url} => Variable {key} was found, but enabled was set to False")
 
-        if var.get("value") is None or var.get("value") == "":
+        elif var.get("value") is None or var.get("value") == "":
             _logger.warning(f"{raw_url} => Variable {key} was found, but value was set to None or empty.")
-        raw_url = raw_url.replace("{{" + key + "}}", var.get("value"))
+        else:
+            raw_url = raw_url.replace("{{" + key + "}}", var.get("value"))
+    return raw_url
+
+
+def build_request_to_send(request: PostmanRequest, variables: Dict) -> Dict:
+    """Convert a single PostmanRequest to a dictionary to be used by requests."""
+    url = replace_url_variables_with_actual_values(request, variables)
 
     # Build the request dictionary (method, url, headers, data, etc.)
     request_dict = request.dict()
@@ -116,7 +140,7 @@ def build_request_to_send(collection: PostmanCollection, variables: Dict, reques
         else:  # TODO: handle other types of request body like GraphQL and form-data
             pass
     del request_dict["body"]  # uses ["data"] instead of ["body"]
-    request_dict["url"] = raw_url
+    request_dict["url"] = url
 
     request_dict["headers"] = {}
     header = request_dict.pop("header")
@@ -204,9 +228,11 @@ class PostmanExecutableRequest:
     def __init__(self, request: Dict):
         self.request = request
 
-    def __call__(self, **kwargs):
+    def __call__(self, variables: Dict = None, **kwargs):
         if kwargs:
             self.request.update(kwargs)
+        if variables:
+            replace_variables_with_actual_values(self.request, variables)
         response = requests.request(**self.request)
         return response
 
@@ -234,7 +260,7 @@ def find_requests(collection: PostmanCollection, variables: Dict) -> Dict:
         },
     }
     """
-    matches: List[DatumInContext] = [match for match in parse("$..[*] where response").find(collection.item)]
+    matches: List[DatumInContext] = [match for match in parse("$..[*] where request").find(collection.item)]
     folders = {}
 
     for match in matches:
@@ -245,7 +271,7 @@ def find_requests(collection: PostmanCollection, variables: Dict) -> Dict:
             folders[folder_name] = {}
 
         request_name = normalize_function_name(match.value["name"])
-        request_to_send = build_request_to_send(collection, variables, PostmanRequest(**match.value["request"]))
+        request_to_send = build_request_to_send(PostmanRequest(**match.value["request"]), variables)
         if request_name not in folders[folder_name]:
             folders[folder_name][request_name] = request_to_send
     return folders
