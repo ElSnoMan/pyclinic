@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyclinic"
-version = "0.1.1"
+version = "0.1.2"
 description = "A python library to test services like RESTful APIs"
 authors = ["Carlos Kidman <carlos@qap.dev>"]
 keywords = ["restful", "api", "testing", "postman"]
@@ -10,6 +10,9 @@ homepage = "https://github.com/ElSnoMan/pyclinic"
 repository = "https://github.com/ElSnoMan/pyclinic"
 include = ["LICENSE"]
 
+[tool.poetry.scripts]
+pyclinic = 'pyclinic.cli:cli'
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pytest = "^6.2.4"
@@ -18,6 +21,8 @@ pydantic = "^1.8.2"
 Faker = "^8.10.3"
 datamodel-code-generator = "^0.11.8"
 jsonpath-ng = "^1.5.3"
+click = "^8.0.1"
+rich = "^10.7.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
