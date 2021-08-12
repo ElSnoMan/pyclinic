@@ -32,18 +32,7 @@ jobs:
 
       - name: Autobump version
         run: |
-          # from refs/tags/v1.2.3 get 1.2.3
-          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
-          if [ ${{ github.event.inputs.version }} != "develop" ]; then
-            VERSION=${{ github.event.inputs.version }}
-          fi
-          PYPROJECT_VERSION=$(poetry run python ./scripts/pyproject.py)
-          if [ $VERSION > $PYPROJECT_VERSION ]
-          then
-            poetry version $VERSION
-          else
-            exit(1)
-          fi
+          ./scripts/bump_version.sh
         shell: bash
 
       - name: Build and publish
