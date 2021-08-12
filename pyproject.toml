@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyclinic"
-version = "0.1.3"
+version = "0.1.5"
 description = "A python library to test services like RESTful APIs"
 authors = ["Carlos Kidman <carlos@qap.dev>"]
 keywords = ["restful", "api", "testing", "postman"]
@@ -14,7 +14,7 @@ include = ["LICENSE"]
 pyclinic = 'pyclinic.cli:cli'
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7"
 pytest = "^6.2.4"
 requests = "^2.26.0"
 pydantic = "^1.8.2"
