@@ -52,6 +52,8 @@ pyclinic generate-models --input <postman_collection_path>
 
 ## In-Depth Example
 
+> Open our **_`demo_postman_runer.ipynb`_** at the root directory for a Jupyter Notebook experience of how to use PyClinic.
+
 When you instantiate `Postman()`, it converts the Postman Collection JSON and turns each request to an executable function.
 
 Take this [Deck of Cards API Collection](https://github.com/ElSnoMan/pyclinic/blob/main/tests/examples/deckofcards.postman_collection.json) example. Here is what the folder structure looks like in Postman:
