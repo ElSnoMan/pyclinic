@@ -9,5 +9,5 @@ def get_version() -> str:
     return version
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     print(get_version())
