@@ -2,10 +2,6 @@ import os
 
 import pyclinic.model_parser as parser
 import pytest
-from pyclinic import postman
-from pyclinic.models.postman_collection_model import PostmanCollection
-
-from tests import utils
 
 
 @pytest.fixture

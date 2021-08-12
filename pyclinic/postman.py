@@ -105,7 +105,11 @@ def replace_variables_with_actual_values(object: Dict, variables: Dict) -> Dict:
             for k, v in value.items():
                 for found_var in re.findall(POSTMAN_VARIABLE, string=v):
                     found_var = found_var[1:]
-                    value[k] = v.replace("{{" + found_var + "}}", variables.get(found_var))
+                    found_value = variables.get(found_var)
+                    if found_value is None:
+                        _logger.error(f"Variable <{found_var}> returned a None value")
+                        found_value = "VARIABLE_VALUE_NOT_FOUND"
+                    value[k] = v.replace("{{" + found_var + "}}", found_value)
         else:
             pass
     return object
@@ -229,7 +233,8 @@ def write_collection_models_to_files(folders: Dict) -> List[str]:
 
 
 class PostmanExecutableRequest:
-    def __init__(self, request: Dict):
+    def __init__(self, name: str, request: Dict):
+        self.name = name
         self.request = request
 
     def __call__(self, variables: Dict = None, **kwargs):
@@ -239,6 +244,10 @@ class PostmanExecutableRequest:
             replace_variables_with_actual_values(self.request, variables)
         response = requests.request(**self.request)
         return response
+
+    def help(self):
+        print(), console.rule(f"[bold green]Request Dictionary for {self.name}[/bold green]")
+        console.print(self.request)
 
 
 class PostmanFolder:
@@ -313,7 +322,7 @@ def map_requests_to_executable_functions(folders: Dict) -> Dict:
         folder = folders[folder_name]
         for request_name in folder.keys():
             request = folder[request_name]
-            folder[request_name] = PostmanExecutableRequest(request)
+            folder[request_name] = PostmanExecutableRequest(request_name, request)
         folders[folder_name] = PostmanFolder(folder_name, folder)
     return folders
 

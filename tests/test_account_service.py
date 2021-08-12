@@ -1,16 +1,9 @@
-from typing import Dict, List
+from typing import Dict
 import pytest
-import requests
-from pydantic import BaseModel, Field
+
+from tests import account_service
+
 from faker import Faker
-
-BASE_URL = "https://demoqa.com"
-
-
-class User(BaseModel):
-    user_id: str = Field(..., alias="userID")
-    username: str
-    books: List[Dict]
 
 
 @pytest.fixture
@@ -19,15 +12,24 @@ def credentials() -> Dict:
     return {"userName": fake.name(), "password": "Pa$$w0rd"}
 
 
-@pytest.fixture
-def user(credentials) -> User:
-    response = requests.post(BASE_URL + "/Account/v1/User", json=credentials)
-    return User(**response.json())
+def test_create_user(credentials):
+    user = account_service.create_user(credentials)
+    assert user["username"] == credentials.get("userName")
 
 
-def test_create_user(user, credentials):
-    assert user.username == credentials.get("userName")
+def test_authorize_user(credentials):
+    _, token = account_service.create_authorized_user(credentials)
+    assert token["status"] == "Success", "Generate Token failed"
+    assert account_service.is_authorized(credentials)
 
 
-def test_authorize_user(user: User):
-    pass
+def test_get_user(credentials):
+    user, token = account_service.create_authorized_user(credentials)
+    found_user = account_service.get_user(user["userID"], token["token"])
+    assert found_user["username"] == user["username"]
+
+
+def test_delete_user(credentials):
+    user, token = account_service.create_authorized_user(credentials)
+    response = account_service.delete_user(user["userID"], token["token"])
+    assert response.status_code == 204

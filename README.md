@@ -173,9 +173,44 @@ def test_runner_show_variables():
    """
 ```
 
-> NOTE: User Variables are defined as a flat dictionary with the key-value pairs you want. These will override values if they already exist, or add them if they don't
+> NOTE: User Variables are defined as a flat dictionary with the key-value pairs you want. These will override values if they already exist, or add them if they don't.
 
-Finally, you can use the `.show_variables()` method to display the variables that the Postman runner has been instantiated with.
+You can use the `.show_variables()` method to display the variables that the Postman runner has been instantiated with.
+
+Finally, you can use the `.help()` method on the executable function to see the raw request dictionary that is being used. This is extremely helpful when needing more details about the request function you're dealing with.
+
+```python
+runner = Postman("bookstore.postman_collection.json")
+runner.Account.create_user.help()
+
+""" Output:
+{
+    'method': 'POST',
+    'url': 'https://demoqa.com/Account/v1/User',
+    'data': {'userName': '{{$randomFullName}}', 'password': 'P@$$w0rd'},
+    'headers': {}
+}
+"""
+```
+
+## TIPS
+
+Instantiate the Postman runner at the top of the file and use the show methods to display info. This way you can see the folders and the variables that you have at the beginning of the program or test run:
+
+```python
+from pyclinic.postman import Postman
+
+
+runner = Postman(BOOKSTORE_PATH, BOOKSTORE_ENV_VARIABLES_PATH)
+runner.show_folders()
+runner.show_variables()
+
+def create_user(credentials: Dict) -> Dict:
+    response = runner.Account.create_user(data=credentials)
+    return response.json()
+
+...
+```
 
 ---
 
