@@ -20,10 +20,9 @@ def json_to_model(JSON: Union[Dict, str]) -> str:
         },
     }
     response = requests.post(URL, json=payload)
+    # Use datamodel-codegen instead of web service we don't control
     if not response.ok:
-        raise Exception(
-            f"Unable to parse JSON to model with API Request: {response.text}"
-        )
+        raise Exception(f"Unable to parse JSON to model with API Request: {response.text}")
     model = response.json()["model"]
     return model
 

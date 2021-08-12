@@ -35,7 +35,7 @@ pytest-cov = "^2.12.1"
 line-length = 120 # override the default of 88
 
 [tool.poe.tasks]
-test = { "cmd" = "pytest tests --cov=.", "help" = "Run all tests and get Code Coverage Report" }
+test = { "cmd" = "pytest tests --cov=. --cov-report term-missing", "help" = "Run all tests and get Code Coverage Report" }
 test-postman = { "cmd" = "pytest tests/test_postman.py", "help" = "Run only tests against Postman" }
 lint = [{ "ref" = "_lint-syntax" }, { "ref" = "_lint-full" }]
 
