@@ -5,9 +5,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - "docs/**"
+    # branches: [main]
+    # paths-ignore:
+    #   - "docs/**"
   pull_request:
     branches: [main]
     paths-ignore:
