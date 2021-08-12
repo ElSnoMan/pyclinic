@@ -1,5 +1,6 @@
 import pytest
 from jsonpath_ng import parse
+from requests.exceptions import ConnectionError
 from pyclinic import postman
 from pyclinic.models.postman_collection_model import PostmanCollection
 from pyclinic.postman import Postman
@@ -13,6 +14,16 @@ def load_collection() -> PostmanCollection:
         return postman.load_postman_collection_from_file(example_filepath)
 
     return _load
+
+
+def test_load_invalid_collection_from_url():
+    with pytest.raises(ConnectionError):
+        postman.load_postman_collection_from_url("https://api.invalid.io/v1/collections/123")
+
+
+def test_load_file_but_not_found():
+    with pytest.raises(FileNotFoundError):
+        postman.load_postman_collection_from_file("/tmp/not_found.json")
 
 
 def test_load_big_petstore_from_file():
@@ -139,4 +150,4 @@ def test_deckofcards_multiple_calls():
     deck_id = create_response.json().get("deck_id")
 
     response = runner.Folder11.draw_cards({"deck_id": deck_id})
-    assert response
+    assert response is not None

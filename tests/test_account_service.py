@@ -22,8 +22,6 @@ def credentials() -> Dict:
 @pytest.fixture
 def user(credentials) -> User:
     response = requests.post(BASE_URL + "/Account/v1/User", json=credentials)
-    if not response.ok:
-        raise Exception(response.text)
     return User(**response.json())
 
 

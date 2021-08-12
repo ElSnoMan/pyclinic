@@ -5,6 +5,8 @@ import re
 from typing import Dict, List, Optional
 
 import requests
+from requests.exceptions import ConnectionError
+from rich.console import Console
 from jsonpath_ng import parse
 from jsonpath_ng.jsonpath import DatumInContext, Fields, Index, Root
 
@@ -12,6 +14,7 @@ from pyclinic import model_parser
 from pyclinic.normalize import normalize_class_name, normalize_function_name
 from pyclinic.models.postman_collection_model import PostmanCollection, PostmanRequest
 
+console = Console(theme=None)
 _logger = logging.getLogger(__name__)
 
 
@@ -22,9 +25,10 @@ def load_postman_collection_from_str(json_str: str) -> PostmanCollection:
 
 def load_postman_collection_from_url(collection_url: str) -> PostmanCollection:
     _logger.debug(f"Requesting Postman Collection from URL: {collection_url}")
-    response = requests.get(collection_url)
-    if not response.ok:
-        raise ValueError(f"Unable to get postman collection from url: {collection_url}")
+    try:
+        response = requests.get(collection_url)
+    except ConnectionError:
+        raise
 
     return PostmanCollection(**response.json())
 
@@ -35,7 +39,7 @@ def load_postman_collection_from_file(collection_file_path: str) -> PostmanColle
         with open(collection_file_path, "r") as f:
             collection = load_postman_collection_from_str(f.read())
     except FileNotFoundError:
-        raise ValueError(f"Unable to find or open file: {collection_file_path}")
+        raise
     return collection
 
 
@@ -238,14 +242,30 @@ class PostmanExecutableRequest:
 
 
 class PostmanFolder:
-    def __init__(self, folder: Dict[str, PostmanExecutableRequest]):
+    def __init__(self, folder_name: str, folder: Dict[str, PostmanExecutableRequest]):
         """A flat dictionary with request names as keys and their executables as the values."""
+        self.name = folder_name
         self.folder = folder
 
     def __getattr__(self, name):
         if name not in self.folder:
             raise ValueError("Postman Folder doesn't have a request named: " + name)
         return self.folder[name]
+
+    def help(self) -> List[str]:
+        """Display all of the executable functions within this folder."""
+        print(), console.rule(f"[bold green]Function Names in {self.name} Folder[/bold green]")
+
+        if len(self.folder) == 0:
+            console.print("No functions found!", style="bold red")
+            return
+
+        keys = [key for key in self.folder.keys()]
+        for i, key in enumerate(keys):
+            console.print(f"{str(i+1):5s} [light_sky_blue1]{key}[/light_sky_blue1]", style="white")
+        console.print("\nExample Usage", style="bold u gold1")
+        console.print(f"\nresponse = runner.{self.name}.{keys[-1]}()")
+        return keys
 
 
 def find_requests(collection: PostmanCollection, variables: Dict) -> Dict:
@@ -294,7 +314,7 @@ def map_requests_to_executable_functions(folders: Dict) -> Dict:
         for request_name in folder.keys():
             request = folder[request_name]
             folder[request_name] = PostmanExecutableRequest(request)
-        folders[folder_name] = PostmanFolder(folder)
+        folders[folder_name] = PostmanFolder(folder_name, folder)
     return folders
 
 
@@ -365,3 +385,30 @@ class Postman:
             raise ValueError("Postman Collection doesn't have a folder named: " + name)
         folder = self.folders[name]
         return folder
+
+    def show_folders(self):
+        """Display all folders and functions found in this Postman Collection."""
+        print(), console.rule(
+            f"[bold green]Folders found in {self.collection.info.name} Postman Collection[/bold green]"
+        )
+
+        if len(self.folders) == 0:
+            console.print("No folders found!", style="bold red")
+            return
+
+        folder_names = list(self.folders.keys())
+        for folder_name in folder_names:
+            display = f"\n{folder_name}." if folder_name != "Root" else "\n*Root."
+            console.print(display, style="bold light_green")
+            for request_name in sorted(self.folders[folder_name].folder.keys()):
+                console.print(f"\t{request_name}", style="light_sky_blue1")
+
+        example_folder = folder_names[-1]
+        example_function = list(self.folders[example_folder].folder.keys())[-1]
+        console.print("\nExample Usage", style="bold u gold1")
+        console.print(f"\nresponse = runner.{example_folder}.{example_function}()")
+
+    def show_variables(self):
+        """Display all variables that this instance of Postman was instantiated with."""
+        print(), console.rule(f"[bold green]{self.collection.info.name} instantiated with these Variables[/bold green]")
+        console.print(self.variables)
