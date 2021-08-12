@@ -52,7 +52,7 @@ pyclinic generate-models --input <postman_collection_path>
 
 ## In-Depth Example
 
-> Open our **_`demo_postman_runer.ipynb`_** at the root directory for a Jupyter Notebook experience of how to use PyClinic.
+> Open our **_`demo_postman_runner.ipynb`_** at the root directory for a Jupyter Notebook experience of how to use PyClinic.
 
 When you instantiate `Postman()`, it converts the Postman Collection JSON and turns each request to an executable function.
 
@@ -183,7 +183,7 @@ Finally, you can use the `.show_variables()` method to display the variables tha
 
 💡 Use `Poetry` as the package manager to take advantage of the `pyproject.toml` at the Workspace Root
 
-> ⚠️ Python version 3.9 or higher is required
+> ⚠️ Python version 3.7 or higher is required
 
 1. Clone/Fork this repo and open it in your favorite editor (VS Code, Pycharm, etc)
 
