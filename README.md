@@ -210,5 +210,8 @@ Finally, you can use the `.show_variables()` method to display the variables tha
 
 ### Twitch Shoutouts 💪🏽🐍
 
+I have been building this entirely while streaming on Twitch!
+Come check it out every weekday at 12:00pm MST at https://twitch.tv/carloskidman
+
 - **_`@sudomaze`_** - amazing feedback, humor, and searching skills
 - **_`@vernkofford`_** - OG subscriber and friend
