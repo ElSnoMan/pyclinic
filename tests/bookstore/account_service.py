@@ -2,7 +2,7 @@ from typing import Dict, Tuple
 from requests import Response
 from pyclinic.postman import Postman
 from tests import utils
-from models.account_model import Nate, Token, User
+from tests.bookstore.models.account_model import Nate, Token, User
 
 
 runner = Postman(utils.BOOKSTORE_PATH, utils.BOOKSTORE_ENV_VARIABLES_PATH)

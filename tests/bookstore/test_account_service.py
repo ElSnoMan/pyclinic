@@ -1,7 +1,7 @@
 from typing import Dict
 import pytest
 
-from tests import account_service
+from tests.bookstore import account_service
 
 from faker import Faker
 

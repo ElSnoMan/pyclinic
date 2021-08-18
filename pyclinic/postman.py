@@ -93,14 +93,14 @@ def find_request_ascendants(request_context: DatumInContext) -> List[str]:
     return ascendants[::-1]
 
 
-def replace_variables_with_actual_values(object: Dict, variables: Dict) -> Dict:
+def replace_variables_with_actual_values(request: Dict, variables: Dict) -> Dict:
     """Replace Postman Variables in the given object with the actual values found in the variables dictionary."""
     POSTMAN_VARIABLE = r"\{([^}]+)\}"  # {{variable}}
-    for key, value in object.items():
+    for key, value in request.items():
         if isinstance(value, str):
             for found_var in re.findall(POSTMAN_VARIABLE, string=value):
                 found_var = found_var[1:]  # remove leading "{" not caught by regex
-                object[key] = value.replace("{{" + found_var + "}}", variables.get(found_var))
+                request[key] = value.replace("{{" + found_var + "}}", variables.get(found_var))
         elif isinstance(value, dict):
             for k, v in value.items():
                 for found_var in re.findall(POSTMAN_VARIABLE, string=v):
@@ -112,7 +112,7 @@ def replace_variables_with_actual_values(object: Dict, variables: Dict) -> Dict:
                     value[k] = v.replace("{{" + found_var + "}}", found_value)
         else:
             pass
-    return object
+    return request
 
 
 def replace_url_variables_with_actual_values(request: PostmanRequest, variables: Dict) -> str:
@@ -142,7 +142,7 @@ def build_request_to_send(request: PostmanRequest, variables: Dict) -> Dict:
     request_dict = request.dict()
     if request.body:
         if request.body.get("raw"):
-            request_dict["data"] = json.loads(request.body.get("raw"))
+            request_dict["data"] = json.dumps(request.body.get("raw"))
         elif request.body.get("urlencoded"):
             request_dict["data"] = str(request.body.get("urlencoded"))
         else:  # TODO: handle other types of request body like GraphQL and form-data

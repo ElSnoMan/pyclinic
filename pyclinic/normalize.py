@@ -18,4 +18,9 @@ def normalize_class_name(name: str) -> str:
         Folder 1 => Folder1
     """
     string = re.sub(r"[?!@#$%^&*()_\-+=,./\'\\\"|:;{}\[\]]", " ", name)
-    return string.title().replace(" ", "")
+    words = []
+    for word in string.split():
+        word = word[0].upper() + word[1:]
+        words.append(word)
+
+    return "".join(words)
