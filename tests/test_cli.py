@@ -18,9 +18,9 @@ def test_runner_show_folders():
 
 
 def test_runner_show_variables():
-    GLOBAL_PATH = utils.WORKSPACE_GLOBAL_VARIABLES_PATH
-    ENV_PATH = utils.BOOKSTORE_ENV_VARIABLES_PATH
-    COLLECTION_PATH = utils.build_example_path(utils.BOOKSTORE_PATH)
+    GLOBAL_PATH = utils.POSTMAN_WORKSPACE_GLOBAL_VARIABLES_PATH
+    ENV_PATH = utils.POSTMAN_BOOKSTORE_ENV_VARIABLES_PATH
+    COLLECTION_PATH = utils.build_example_path(utils.POSTMAN_BOOKSTORE_PATH)
 
     user_variables = {"USERNAME": "Carlos Kidman", "SHOW": "ME THE MONEY"}
     runner = Postman(COLLECTION_PATH, ENV_PATH, GLOBAL_PATH, user_variables)

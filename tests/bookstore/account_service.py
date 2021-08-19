@@ -5,7 +5,7 @@ from tests import utils
 from tests.bookstore.models.account_model import Nate, Token, User
 
 
-runner = Postman(utils.BOOKSTORE_PATH, utils.BOOKSTORE_ENV_VARIABLES_PATH)
+runner = Postman(utils.POSTMAN_BOOKSTORE_PATH, utils.POSTMAN_BOOKSTORE_ENV_VARIABLES_PATH)
 runner.show_folders()
 runner.show_variables()
 

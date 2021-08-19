@@ -5,6 +5,8 @@ from pyclinic.normalize import normalize_function_name, normalize_class_name
 FUNCTION_NAME_EXAMPLES = [
     ("Is 10 Even?", "is_10_even"),
     ("{get order}", "get_order"),
+    ("This$umm3ry1$0dd", "this_umm3ry1_0dd"),
+    ("getUserByName", "get_user_by_name"),
 ]
 
 

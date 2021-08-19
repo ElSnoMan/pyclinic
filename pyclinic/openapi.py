@@ -76,44 +76,29 @@ def find_requests(spec: Dict) -> Dict:
     folders = {}
 
     for path in paths.keys():
-        folder_name = path.split("/")[-1]
+        folder_name = path.split("/")[1]  # /pets/{petId} => pets
         folder_name = normalize_class_name(folder_name)
-        folders[folder_name] = {}
+        if folder_name not in folders:
+            folders[folder_name] = {}
         for method in [k for k in paths[path].keys() if k in METHODS]:
-            function_name = normalize_function_name(paths[path][method]["summary"])
+            function_name = normalize_function_name(paths[path][method]["operationId"])
             folders[folder_name][function_name] = {"method": method.upper(), "url": url + path}
 
     return folders
 
 
-# def replace_variables_with_actual_values(folders: Dict, variables: Dict) -> Dict:
-#     """Replace OpenApi Variables in the given object with the actual values found in the variables dictionary."""
-#     OPENAPI_VARIABLE = r"\{([^}]+)\}"  # {variable}
-#     # TODO: Find a way to do this without 4 for loops
-#     for folder_name, request in folders.items():
-#         for request_name, request_value in request.items():
-#             for key, value in request_value.items():
-#                 for found_var in re.findall(OPENAPI_VARIABLE, string=value):
-#                     found_value = variables.get(found_var)
-#                     if found_value is None:
-#                         _logger.error(f"Variable <{found_var}> returned a None value")
-#                         found_value = "VARIABLE_VALUE_NOT_FOUND"
-#                     else:
-#                         pass
-#                     request_value[key] = value.replace("{" + found_var + "}", variables.get(found_var))
-#     return folders
-
-
 def build_request_to_send(request: Dict, variables: Dict) -> Dict:
     """
+    request looks like:
     {
         "method": "GET",
         "url": "{BASE_URL}/Accounts/v1",
+        "headers": {"Authorization": "Bearer {token}"},
     }
     """
     OPENAPI_VARIABLE = r"\{([^}]+)\}"  # {variable}
     for key, value in request.items():
-        for found_var in re.findall(OPENAPI_VARIABLE, string=value):
+        for found_var in re.findall(OPENAPI_VARIABLE, string=str(value)):
             found_value = variables.get(found_var)
             if found_value is None:
                 _logger.warning(f"Variable {{{found_var}}} was not found in the Variables provided")
@@ -136,7 +121,7 @@ class OpenApiExecutableRequest:
         return response
 
     def help(self):
-        print(), console.rule(f"[bold green]Request Dictionary for {self.name}[/bold green]")
+        print(), console.rule(f"[bold green]Request to Send for {self.name}[/bold green]")
         console.print(self.request)
 
 
@@ -148,12 +133,15 @@ class OpenApiFolder:
 
     def __getattr__(self, name):
         if name not in self.folder:
-            raise ValueError("OpenApi Spec doesn't have a request with the summary of: " + name)
+            available_requests = "\n".join(self.folder.keys())
+            raise ValueError(
+                f"{self.name} Folder doesn't have a request with the operationId of: {name}\n\nDid you mean any of these:\n\n{available_requests}"
+            )
         return self.folder[name]
 
     def help(self) -> List[str]:
         """Display all of the executable functions within this folder."""
-        print(), console.rule(f"[bold green]Function Names in {self.name} Path[/bold green]")
+        print(), console.rule(f"[bold green]Requests in {self.name} Folder[/bold green]")
 
         if len(self.folder) == 0:
             console.print("No functions found!", style="bold red")
@@ -236,13 +224,16 @@ class OpenApi:
 
     def __getattr__(self, name):
         if name not in self.folders:
-            raise ValueError("OpenApi Spec doesn't have a path named: " + name)
+            available_folders = "\n".join(self.folders.keys())
+            raise ValueError(
+                f"Spec doesn't have a folder named: {name}\n\nDid you mean any of these:\n\n{available_folders}"
+            )
         folder = self.folders[name]
         return folder
 
     def show_folders(self):
-        """Display all folders and functions found in this Postman Collection."""
-        print(), console.rule(f"[bold green]Folders (aka Paths) found in {self.title} Postman Collection[/bold green]")
+        """Display all folders and functions found in this Spec file."""
+        print(), console.rule(f"[bold green]Folders in {self.title}[/bold green]")
 
         if len(self.folders) == 0:
             console.print("No folders found!", style="bold red")
@@ -262,5 +253,5 @@ class OpenApi:
 
     def show_variables(self):
         """Display all variables that this instance of Postman was instantiated with."""
-        print(), console.rule(f"[bold green]{self.title} instantiated with these Variables[/bold green]")
+        print(), console.rule(f"[bold green]User Variables for {self.title}[/bold green]")
         console.print(self.variables)
