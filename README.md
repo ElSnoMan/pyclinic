@@ -3,18 +3,13 @@
 PyClinic is a library to make it easier and faster to get your Service Testing up and running!
 
 - [Quickstart](#quickstart)
-- [In-Depth Example](#in-depth-example)
+- [OpenApi3 Demo](#openapi3-demo-notebook)
+- [In-Depth Postman Example](#in-depth-postman-example)
 - [Automated Test Example](#automated-test-example)
-- [Working with Variables](#working-with-variables)
+- [Working with Postman Variables](#working-with-postman-variables)
 - [Setup and Contribute](#setup-and-contribute)
 
-Currently, PyClinic can integrate with Postman users so you can export a Postman Collection and use it to automatically generate python functions!
-
-You can also generate Pydantic Models by using the CLI:
-
-```bash
-pyclinic generate-models --input <postman_collection_path>
-```
+PyClinic supports Postman Collections and OpenAPI3 Spec files and can auto-generate functions using just the file!
 
 > 💡 This allows you to quickly write automation to work with many endpoints or even write automated tests against those endpoints!
 
@@ -48,13 +43,28 @@ pyclinic generate-models --input <postman_collection_path>
    print(response.json())
    ```
 
+5. The process is the same for an OpenApi3 Spec File, but you use the `OpenApi` class instead
+
+   ```python
+   from pyclinic.openapi import OpenApi
+
+   runner = OpenApi("path-to-spec-file.yml")
+   response = runner.Pets.list_all_pets()
+   assert response.ok
+   print(response.json())
+   ```
+
 ---
 
-## In-Depth Example
+## OpenApi3 Demo Notebook
 
-> Open our **_`demo_postman_runner.ipynb`_** at the root directory for a Jupyter Notebook experience of how to use PyClinic.
+> Open our [demo_openapi3_runner.ipynb](./demo_openapi3_runner.ipynb) for a Jupyter Notebook experience of how to use PyClinic.
 
-When you instantiate `Postman()`, it converts the Postman Collection JSON and turns each request to an executable function.
+## In-Depth Postman Example
+
+> Open our [demo_postman_runner.ipynb](./demo_postman_runner.ipynb) for a Jupyter Notebook experience of how to use PyClinic.
+
+When you instantiate `Postman()`, it converts the Postman Collection JSON and turns each request into an executable function.
 
 Take this [Deck of Cards API Collection](https://github.com/ElSnoMan/pyclinic/blob/main/tests/examples/deckofcards.postman_collection.json) example. Here is what the folder structure looks like in Postman:
 
@@ -141,7 +151,7 @@ def test_deckofcards_multiple_calls():
     assert len(response.json()["cards"]) == 2, "Should draw two cards from deck"
 ```
 
-## Working with Variables
+## Working with Postman Variables
 
 Postman has 3 layers of Variables, but we've added a 4th:
 

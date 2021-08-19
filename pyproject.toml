@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyclinic"
-version = "0.1.6"
+version = "0.2.0"
 description = "A python library to test services like RESTful APIs"
 authors = ["Carlos Kidman <carlos@qap.dev>"]
 keywords = ["restful", "api", "testing", "postman"]
@@ -15,10 +15,8 @@ pyclinic = 'pyclinic.cli:cli'
 
 [tool.poetry.dependencies]
 python = "^3.7.1"
-pytest = "^6.2.4"
 requests = "^2.26.0"
 pydantic = "^1.8.2"
-Faker = "^8.10.3"
 datamodel-code-generator = "^0.11.8"
 jsonpath-ng = "^1.5.3"
 click = "^8.0.1"
@@ -30,6 +28,8 @@ black = "^21.7b0"
 poethepoet = "^0.10.0"
 ipykernel = "^6.0.3"
 pytest-cov = "^2.12.1"
+Faker = "^8.11.0"
+pytest = "^6.2.4"
 
 [tool.black]
 line-length = 120 # override the default of 88
