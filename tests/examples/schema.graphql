@@ -1,0 +1,19 @@
+type BlogPost {
+  id: ID!
+  title: String!
+  content: String!
+  hasAuthor: Author!
+}
+
+type Author {
+  id: ID!
+  name: String!
+  hasBlog: [BlogPost]
+}
+
+type User {
+  userID: ID!
+  name: String
+  email: String!
+  address: String
+}
