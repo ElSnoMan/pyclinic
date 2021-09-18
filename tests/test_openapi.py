@@ -3,11 +3,12 @@ from tests import utils
 import pytest
 from pyclinic import openapi
 from pyclinic.openapi import OpenApi
+from pyclinic.base import load_spec_file
 
 
 @pytest.fixture
 def spec() -> Dict:
-    return openapi.load_openapi_spec_from_file(utils.SIMPLE_PETSTORE_OPENAPI_YAML)
+    return load_spec_file(utils.SIMPLE_PETSTORE_OPENAPI_YAML)
 
 
 def test_read_yaml(spec: Dict):
@@ -15,7 +16,7 @@ def test_read_yaml(spec: Dict):
 
 
 def test_extract_base_url_from_spec(spec: Dict):
-    url, variables = openapi.extract_base_url_from_spec(spec)
+    url, variables = openapi.build_url(spec)
     assert url == "http://petstore.swagger.io/v1"
     assert variables == {"BASE_URL": url}
 
