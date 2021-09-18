@@ -133,7 +133,8 @@ class ExecutableFolder:
         if name not in self.folder:
             available_requests = "\n".join(self.folder.keys())
             raise ValueError(
-                f"{self.name} Folder doesn't have a request with the summary of: {name}\n\nDid you mean any of these:\n\n{available_requests}"
+                f"{self.name} Folder doesn't have request with the summary of: {name}\n\n"
+                / f"Did you mean any of these:\n\n{available_requests}"
             )
         return self.folder[name]
 

@@ -1,4 +1,3 @@
-from tests.test_convert_openapi import FILE_TYPES
 import pytest
 from tests import utils
 from pyclinic.swagger import Swagger
