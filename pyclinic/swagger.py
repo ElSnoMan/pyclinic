@@ -34,6 +34,7 @@ def build_url(host: str, base_path: str, path: str) -> str:
         base_path = base_path[:-1]
 
     # 3. Prefix base to path
+    path = path.replace(base_path, "")
     return host + base_path + path
 
 
