@@ -2,16 +2,22 @@
 
 PyClinic is a library to make it easier and faster to get your Service Testing up and running!
 
+PyClinic currently supports and auto-generates functions for:
+
+- Postman Collections
+- Swagger2 Spec Files
+- OpenAPI3 Spec Files
+
+> 💡 This allows you to quickly write automation to work with many endpoints or even write automated tests against those endpoints!
+
+## Table of Contents
+
 - [Quickstart](#quickstart)
 - [OpenApi3 Demo (Swagger 2 is identical)](#openapi3-demo-notebook)
 - [In-Depth Postman Example](#in-depth-postman-example)
 - [Automated Test Example](#automated-test-example)
 - [Working with Postman Variables](#working-with-postman-variables)
 - [Setup and Contribute](#setup-and-contribute)
-
-PyClinic supports Postman Collections and OpenAPI3 Spec files and can auto-generate functions using just the file!
-
-> 💡 This allows you to quickly write automation to work with many endpoints or even write automated tests against those endpoints!
 
 ---
 
