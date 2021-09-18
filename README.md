@@ -3,7 +3,7 @@
 PyClinic is a library to make it easier and faster to get your Service Testing up and running!
 
 - [Quickstart](#quickstart)
-- [OpenApi3 Demo](#openapi3-demo-notebook)
+- [OpenApi3 Demo (Swagger 2 is identical)](#openapi3-demo-notebook)
 - [In-Depth Postman Example](#in-depth-postman-example)
 - [Automated Test Example](#automated-test-example)
 - [Working with Postman Variables](#working-with-postman-variables)
@@ -43,7 +43,7 @@ PyClinic supports Postman Collections and OpenAPI3 Spec files and can auto-gener
    print(response.json())
    ```
 
-5. The process is the same for an OpenApi3 Spec File, but you use the `OpenApi` class instead
+5. The process is the same for a Swagger2 or OpenApi3 Spec File, but you use the `Swagger` or `OpenApi` class instead
 
    ```python
    from pyclinic.openapi import OpenApi
@@ -56,7 +56,7 @@ PyClinic supports Postman Collections and OpenAPI3 Spec files and can auto-gener
 
 ---
 
-## OpenApi3 Demo Notebook
+## OpenApi3 Demo Notebook (Swagger2 experience is identical)
 
 > Open our [demo_openapi3_runner.ipynb](./demo_openapi3_runner.ipynb) for a Jupyter Notebook experience of how to use PyClinic.
 
