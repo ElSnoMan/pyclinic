@@ -7,6 +7,8 @@ def build_example_path(filename: str) -> str:
 
 OPENAPI_PETSTORE_YAML = build_example_path("petstore.openapi3.yaml")
 OPENAPI_PETSTORE_JSON = build_example_path("petstore.openapi3.json")
+
+SWAGGER_SHORTCUT_JSON = build_example_path("shortcut-api.swagger2.json")
 SWAGGER_PETSTORE_YAML = build_example_path("petstore.swagger2.yaml")
 SWAGGER_PETSTORE_JSON = build_example_path("petstore.swagger2.json")
 
