@@ -8,6 +8,7 @@ import re
 from typing import Dict, List, Optional
 
 import requests
+from requests import Response
 import yaml
 from rich.console import Console
 
@@ -102,7 +103,7 @@ class ExecutableRequest:
         if global_request:
             self.request.update(global_request)
 
-    def __call__(self, variables: Dict = None, **kwargs):
+    def __call__(self, variables: Dict = None, **kwargs) -> Response:
         if kwargs:
             self.request.update(kwargs)
         if variables:
