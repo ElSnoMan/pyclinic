@@ -66,7 +66,7 @@ class OpenApi(BaseRunner):
 
     Args:
         spec_path: The path to the OpenApi spec file (.yaml | .yml | .json)
-        user_variables: An optional dict of variables to be used by OpenApi
+        variables: An optional dict of variables to be used by OpenApi
 
     Format:
         OpenApi.ExecutableFolder.ExecutableRequest(**kwargs)
@@ -90,11 +90,12 @@ class OpenApi(BaseRunner):
     def __init__(
         self,
         spec_path: str,
-        user_variables: Optional[Dict] = None,
+        global_request: Optional[Dict] = None,
+        variables: Optional[Dict] = None,
     ):
-        super().__init__(spec_path, user_variables)
+        super().__init__(spec_path, global_request, variables)
         self.folders = self.__load()
 
     def __load(self):
         reqs = find_requests(self.spec)
-        return map_requests_to_executable_functions(reqs, self.variables)
+        return map_requests_to_executable_functions(reqs, self.global_request, self.variables)

@@ -95,9 +95,12 @@ class ExecutableRequest:
         .get_pet_by_id() is the ExecutableRequest
     """
 
-    def __init__(self, name: str, request: Dict):
+    def __init__(self, name: str, global_request: Dict, request: Dict):
         self.name = name
+        self.global_request = global_request
         self.request = request
+        if global_request:
+            self.request.update(global_request)
 
     def __call__(self, variables: Dict = None, **kwargs):
         if kwargs:
@@ -154,7 +157,7 @@ class ExecutableFolder:
         return keys
 
 
-def map_requests_to_executable_functions(folders: Dict, variables: Dict) -> Dict:
+def map_requests_to_executable_functions(folders: Dict, global_request: Dict, variables: Dict) -> Dict:
     """Creates the ExecutableFolders and their respective ExecutableRequests for the entire spec file.
 
     Each specification has their own schema for organizing the requests.
@@ -167,6 +170,7 @@ def map_requests_to_executable_functions(folders: Dict, variables: Dict) -> Dict
 
     Args:
         folders: The requests found from using find_requests()
+        global_request: The global request to add to each request
         variables: A dictionary of variables to replace the placeholders in the request with
 
     Returns:
@@ -185,7 +189,7 @@ def map_requests_to_executable_functions(folders: Dict, variables: Dict) -> Dict
         folder = folders[folder_name]
         for request_name in folder.keys():
             request = build_request_to_send(folder[request_name], variables)
-            folder[request_name] = ExecutableRequest(request_name, request)
+            folder[request_name] = ExecutableRequest(request_name, global_request, request)
         folders[folder_name] = ExecutableFolder(folder_name, folder)
     return folders
 
@@ -195,14 +199,19 @@ class BaseRunner:
 
     Args:
         spec_path: The path to the spec file (.yaml | .yml | .json)
-        user_variables: An optional dict of variables to be used by the runner instance
+        global_request: An optional dict to be added to every request. Useful for things like Authorization headers.
+        variables: An optional dict of variables to be used by the runner instance
 
     Format:
         Runner.ExecutableFolder.ExecutableRequest()
 
     Examples:
         # Instantiate a Runner object
-        runner = RUnner(spec_path, user_variables={"USERNAME": "foo", "PASSWORD": "bar"})
+        runner = Runner(
+            spec_path,
+            global_request={"headers": {"Authorization": "Bearer {token}"}},
+            user_variables={"USERNAME": "foo", "PASSWORD": "bar"}
+        )
 
         # Then call the request function
         runner.Pets.list_all_pets()
@@ -219,11 +228,13 @@ class BaseRunner:
     def __init__(
         self,
         spec_path: str,
-        user_variables: Optional[Dict] = None,
+        global_request: Dict = None,
+        variables: Optional[Dict] = None,
     ):
         self.spec = load_spec_file(spec_path)
         self.title = self.spec["info"]["title"]
-        self.variables = user_variables or {}
+        self.global_request = global_request or dict()
+        self.variables = variables or dict()
         self.folders = self.__load()
 
     def __load(self) -> Dict:

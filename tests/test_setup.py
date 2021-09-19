@@ -3,4 +3,4 @@ from scripts import pyproject
 
 def test_get_pyproject_version():
     version = pyproject.get_version()
-    assert version == "0.2.0"
+    assert version == "0.3.2"

@@ -67,3 +67,13 @@ def test_swagger_runner_petstore():
     runner.show_folders()
     runner.Pet.help()
     runner.Pet.add_pet.help()
+
+
+def test_swagger_global_request():
+    headers = {"headers": {"Authorization": "Bearer 123"}}
+    runner = Swagger(utils.SWAGGER_PETSTORE_JSON, global_request=headers, variables={"petId": 123})
+    runner.Pet.help()
+    get_pet = runner.Pet.get_pet_by_id
+    assert get_pet.request["method"] == "GET"
+    assert get_pet.request["url"] == "https://petstore.swagger.io/v2/pet/123"
+    assert get_pet.request["headers"] == headers["headers"]

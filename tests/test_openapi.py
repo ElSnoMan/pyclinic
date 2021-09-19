@@ -38,3 +38,12 @@ def test_openapi_runner():
     response = runner.Pets.show_pet_by_id(variables={"petId": 123})
 
     assert response.status_code == 404
+
+
+def test_openapi_global_request():
+    headers = {"headers": {"Authorization": "Bearer 123"}}
+    runner = OpenApi(utils.SIMPLE_PETSTORE_OPENAPI_YAML, global_request=headers, variables={"petId": 123})
+    show_pet = runner.Pets.show_pet_by_id
+    assert show_pet.request["method"] == "GET"
+    assert show_pet.request["url"] == "http://petstore.swagger.io/v1/pets/123"
+    assert show_pet.request["headers"] == headers["headers"]

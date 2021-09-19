@@ -84,7 +84,7 @@ class Swagger(BaseRunner):
 
     Args:
         spec_path: The path to the Swagger spec file (.yaml | .yml | .json)
-        user_variables: An optional dict of variables to be used by Swagger
+        variables: An optional dict of variables to be used by Swagger
         host: The BASE_URL to prepend to all paths in the spec
         base_path: The BASE_PATH to prepend to all paths in the spec
 
@@ -117,15 +117,16 @@ class Swagger(BaseRunner):
     def __init__(
         self,
         spec_path: str,
-        user_variables: Optional[Dict] = None,
+        global_request: Optional[Dict] = None,
+        variables: Optional[Dict] = None,
         host: Optional[str] = None,
         base_path: Optional[str] = None,
     ):
-        super().__init__(spec_path, user_variables)
+        super().__init__(spec_path, global_request, variables)
         self.host = host
         self.base_path = base_path
         self.folders = self.__load()
 
     def __load(self):
         reqs = find_requests(self.spec, host=self.host, base_path=self.base_path)
-        return base.map_requests_to_executable_functions(reqs, self.variables)
+        return base.map_requests_to_executable_functions(reqs, self.global_request, self.variables)

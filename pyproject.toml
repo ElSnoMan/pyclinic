@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyclinic"
-version = "0.2.0"
+version = "0.3.2"
 description = "A python library to test services like RESTful APIs"
 authors = ["Carlos Kidman <carlos@qap.dev>"]
 keywords = ["restful", "api", "testing", "postman"]
